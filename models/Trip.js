@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const tripSchema = new Schema({
   title: String,
   description: String,
-  users: [String],
+  users: [{ type: Schema.Types.ObjectId, ref: "User" }],
   start_date: Date,
   end_date: Date,
   lodging: [

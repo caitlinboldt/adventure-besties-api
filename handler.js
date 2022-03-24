@@ -3,6 +3,7 @@ const express = require("express");
 require("dotenv").config({ path: "./.env" });
 const connectToDatabase = require("./database");
 const Trip = require("./models/Trip");
+const User = require("./models/User");
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,11 @@ app.get("/trips", async (req, res, next) => {
 app.post("/trip", async (req, res, next) => {
   const trip = await Trip.create(req.body);
   return res.status(200).json(trip);
+});
+
+app.post("/user", async (req, res, next) => {
+  const user = await User.create(req.body);
+  return res.status(200).json(user);
 });
 
 app.use((req, res, next) => {
