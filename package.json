@@ -4,6 +4,7 @@
     "description": "aws-node-express-api",
     "dependencies": {
         "express": "^4.17.1",
+        "mongoose": "^6.2.8",
         "serverless-http": "^2.7.0"
     }
 }
