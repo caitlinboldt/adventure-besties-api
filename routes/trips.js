@@ -3,12 +3,6 @@ const router = express.Router();
 const Trip = require("../models/Trip");
 const User = require("../models/User");
 
-// Middleware that is specific to this router.
-router.use((req, res, next) => {
-  console.log("Time: ", Date.now());
-  next();
-});
-
 router.post("/", async (req, res, next) => {
   const trip = await Trip.create(req.body);
   return res.status(200).json(trip);
@@ -17,12 +11,13 @@ router.post("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   const trip = await Trip.findById(req.params.id);
   if (!trip) {
-    return res.status(404).send("Trip is not found");
+    return res.status(404).json({ message: "Trip is not found" });
   }
   return res.status(200).json(trip);
 });
 
-router.patch("/:id", async (req, res, next) => {
+router.patch("/:id", (req, res, next) => {
+  // TO DO: Add functionality to be able to update more than one key at a time.
   Trip.findOneAndUpdate(
     { _id: req.params.id },
     { [req.body.key]: req.body.value },
@@ -38,7 +33,8 @@ router.patch("/:id", async (req, res, next) => {
   );
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", (req, res, next) => {
+  // TO DO: Add functionality to delete the trip from all users as well.
   Trip.findByIdAndDelete(req.params.id, (error, deletedTrip) => {
     if (error) {
       return res.status(500).json({ error });
@@ -55,13 +51,15 @@ router.patch("/new/addUser", async (req, res, next) => {
     { $addToSet: { trips: req.body.tripId } }
   );
   if (!user) {
-    return res.status(404).send("User is not found");
+    return res.status(404).json({ message: "User is not found" });
   }
   await Trip.findOneAndUpdate(
     { _id: req.body.tripId },
     { $addToSet: { users: user._id } }
   );
-  return res.status(200).json("Success, the user has been added to the trip");
+  return res
+    .status(200)
+    .json({ message: "Success, the user has been added to the trip" });
 });
 
 module.exports = router;
