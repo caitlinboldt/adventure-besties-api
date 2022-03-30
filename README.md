@@ -8,4 +8,4 @@ Adventure Besties is an application for people who enjoy planning and traveling.
 
 A Node Express API service running on AWS Lambda using the Serverless Framework.
 
-![image info](design/Adventure-Besties.drawio.png)
+![high-level architecture](design/Adventure-Besties.drawio.png)

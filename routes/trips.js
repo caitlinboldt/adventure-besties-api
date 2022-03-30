@@ -15,7 +15,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.get("/:id", async (req, res, next) => {
-  const trip = await Trip.findById(reg.params.id);
+  const trip = await Trip.findById(req.params.id);
   if (!trip) {
     return res.status(404).send("Trip is not found");
   }
@@ -23,29 +23,43 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.patch("/:id", async (req, res, next) => {
-  const trip = await Trip.findByIdAndUpdate(reg.params.id);
-  // TO DO: Update trip data.
-  return res.status(200).json(trip);
+  Trip.findOneAndUpdate(
+    { _id: req.params.id },
+    { [req.body.key]: req.body.value },
+    {},
+    (error, updatedTrip) => {
+      if (error) {
+        return res.status(500).json({ error });
+      }
+      return res
+        .status(200)
+        .json({ message: "Successfully saved trip update", updatedTrip });
+    }
+  );
 });
 
 router.delete("/:id", async (req, res, next) => {
-  const trip = await Trip.findByIdAndDelete(reg.params.id);
-  // TO DO: Delete trip data.
-  return res.status(200).json(trip);
+  Trip.findByIdAndDelete(req.params.id, (error, deletedTrip) => {
+    if (error) {
+      return res.status(500).json({ error });
+    }
+    return res
+      .status(200)
+      .json({ message: "Successfully deleted the trip", deletedTrip });
+  });
 });
 
-router.patch("/addUser", async (req, res, next) => {
-  // TO DO: Only allow the same id once.
+router.patch("/new/addUser", async (req, res, next) => {
   const user = await User.findOneAndUpdate(
     { email: req.body.email },
-    { $push: { trips: req.body.tripId } }
+    { $addToSet: { trips: req.body.tripId } }
   );
   if (!user) {
     return res.status(404).send("User is not found");
   }
   await Trip.findOneAndUpdate(
     { _id: req.body.tripId },
-    { $push: { users: user._id } }
+    { $addToSet: { users: user._id } }
   );
   return res.status(200).json("Success, the user has been added to the trip");
 });
