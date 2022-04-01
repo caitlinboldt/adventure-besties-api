@@ -3,10 +3,8 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   email: String,
-  first_name: String,
+  name: String,
   cognito_id: String,
-  last_name: String,
-  age: Number,
   settings: {
     show_full_name: { type: Boolean, default: true },
     show_email: { type: Boolean, default: true },
