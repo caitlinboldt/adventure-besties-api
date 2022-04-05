@@ -4,8 +4,12 @@ const User = require("../models/User");
 const Trip = require("../models/Trip");
 
 router.post("/", async (req, res, next) => {
-  const user = await User.create(req.body);
-  return res.status(200).json(user);
+  const user = await User.findOne({ email: req.body.email });
+  if (user) {
+    return res.status(200).json(user);
+  }
+  const newUser = await User.create(req.body);
+  return res.status(200).json(newUser);
 });
 
 router.get("/:id/trips", async (req, res, next) => {
