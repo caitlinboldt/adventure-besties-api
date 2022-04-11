@@ -17,7 +17,7 @@ router.get("/:id/trips", async (req, res, next) => {
   if (!user) {
     return res.status(404).json({ message: "User is not found" });
   }
-  const trips = await Trip.find({ _id: { $in: [user.trips] } });
+  const trips = await Trip.find({ _id: { $in: user.trips } });
   return res.status(200).json(trips);
 });
 

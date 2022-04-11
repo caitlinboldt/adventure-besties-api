@@ -7,7 +7,6 @@ const trips = require("./routes/trips");
 const users = require("./routes/users");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 connectToDatabase();
 

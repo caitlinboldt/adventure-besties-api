@@ -5,6 +5,13 @@ const User = require("../models/User");
 
 router.post("/", async (req, res, next) => {
   const trip = await Trip.create(req.body);
+  const user = await User.findOneAndUpdate(
+    { _id: req.body.users[0] },
+    { $addToSet: { trips: trip._id } }
+  );
+  if (!user) {
+    return res.status(404).json({ message: "User is not found" });
+  }
   return res.status(200).json(trip);
 });
 
