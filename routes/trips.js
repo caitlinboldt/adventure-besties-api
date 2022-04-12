@@ -2,11 +2,16 @@ const express = require("express");
 const router = express.Router();
 const Trip = require("../models/Trip");
 const User = require("../models/User");
+const upload = require("../middleware/cloudinary");
 
-router.post("/", async (req, res, next) => {
-  const trip = await Trip.create(req.body);
+router.post("/", upload.single("image"), async (req, res, next) => {
+  if (req.file) {
+    req.body.image_url = req.file.path;
+  }
+
+  const trip = await Trip.create({ ...req.body, users: [req.body.user] });
   const user = await User.findOneAndUpdate(
-    { _id: req.body.users[0] },
+    { _id: req.body.user },
     { $addToSet: { trips: trip._id } }
   );
   if (!user) {
@@ -28,10 +33,10 @@ router.patch("/:id", (req, res, next) => {
   Trip.findOneAndUpdate(
     { _id: req.params.id },
     { [req.body.key]: req.body.value },
-    {},
+    { new: true },
     (error, updatedTrip) => {
       if (error) {
-        return res.status(500).json({ error });
+        return res.status(500).send(error);
       }
       return res
         .status(200)

@@ -7,6 +7,7 @@ const tripSchema = new Schema({
   users: [{ type: Schema.Types.ObjectId, ref: "User" }],
   start_date: Date,
   end_date: Date,
+  image_url: String,
   lodging: [
     {
       lodging_type: String,
