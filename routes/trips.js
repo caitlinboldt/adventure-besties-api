@@ -29,10 +29,9 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.patch("/:id", (req, res, next) => {
-  // TO DO: Add functionality to be able to update more than one key at a time.
   Trip.findOneAndUpdate(
     { _id: req.params.id },
-    { [req.body.key]: req.body.value },
+    { ...req.body },
     { new: true },
     (error, updatedTrip) => {
       if (error) {
@@ -45,8 +44,20 @@ router.patch("/:id", (req, res, next) => {
   );
 });
 
-router.delete("/:id", (req, res, next) => {
-  // TO DO: Add functionality to delete the trip from all users as well.
+router.delete("/:id", async (req, res, next) => {
+  const trip = await Trip.findById(req.params.id).populate("users");
+
+  await User.updateMany(
+    {
+      _id: { $in: trip.users },
+    },
+    {
+      $pullAll: {
+        trips: [req.params.id],
+      },
+    }
+  );
+
   Trip.findByIdAndDelete(req.params.id, (error, deletedTrip) => {
     if (error) {
       return res.status(500).json({ error });
