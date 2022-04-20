@@ -38,7 +38,7 @@ const tripSchema = new Schema({
       cost: Number,
     },
   ],
-  itinerary: [{ day_id: String, details: String }],
+  itinerary: [{ day_date: String, details: String }],
   map_pinpoints: [String],
   total_cost: Number,
   updated: { type: Date, default: Date.now },

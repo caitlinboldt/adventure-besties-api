@@ -28,10 +28,45 @@ router.get("/:id", async (req, res, next) => {
   return res.status(200).json(trip);
 });
 
+// PATCH for single string field.
 router.patch("/:id", (req, res, next) => {
   Trip.findOneAndUpdate(
     { _id: req.params.id },
     { ...req.body },
+    { new: true },
+    (error, updatedTrip) => {
+      if (error) {
+        return res.status(500).send(error);
+      }
+      return res
+        .status(200)
+        .json({ message: "Successfully saved trip update", updatedTrip });
+    }
+  );
+});
+
+// PATCH for array of objects field.
+router.patch("/:id/add/:property", (req, res, next) => {
+  Trip.findOneAndUpdate(
+    { _id: req.params.id },
+    { $push: { [req.params.property]: req.body } },
+    { new: true },
+    (error, updatedTrip) => {
+      if (error) {
+        return res.status(500).send(error);
+      }
+      return res
+        .status(200)
+        .json({ message: "Successfully saved trip update", updatedTrip });
+    }
+  );
+});
+
+// PATCH for removing an array of objects field.
+router.patch("/:id/remove/:property", (req, res, next) => {
+  Trip.findOneAndUpdate(
+    { _id: req.params.id },
+    { $pull: { [req.params.property]: { _id: req.body.itemId } } },
     { new: true },
     (error, updatedTrip) => {
       if (error) {
