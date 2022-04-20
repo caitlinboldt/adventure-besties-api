@@ -111,13 +111,21 @@ router.patch("/new/addUser", async (req, res, next) => {
   if (!user) {
     return res.status(404).json({ message: "User is not found" });
   }
-  await Trip.findOneAndUpdate(
+
+  Trip.findOneAndUpdate(
     { _id: req.body.tripId },
-    { $addToSet: { users: user._id } }
+    { $addToSet: { users: user._id } },
+    { new: true },
+    (error, updatedTrip) => {
+      if (error) {
+        return res.status(500).send(error);
+      }
+      return res.status(200).json({
+        message: "Success, the user has been added to the trip",
+        updatedTrip,
+      });
+    }
   );
-  return res
-    .status(200)
-    .json({ message: "Success, the user has been added to the trip" });
 });
 
 module.exports = router;
