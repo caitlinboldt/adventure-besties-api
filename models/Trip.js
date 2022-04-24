@@ -14,6 +14,8 @@ const tripSchema = new Schema({
       location: String,
       cost_per_night: Number,
       nights: Number,
+      start_date: Date,
+      end_date: Date,
       website_url: String,
     },
   ],
