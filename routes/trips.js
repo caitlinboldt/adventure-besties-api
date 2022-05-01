@@ -21,7 +21,7 @@ router.post("/", upload.single("image"), async (req, res, next) => {
 });
 
 router.get("/:id", async (req, res, next) => {
-  const trip = await Trip.findById(req.params.id);
+  const trip = await Trip.findById(req.params.id).populate("users");
   if (!trip) {
     return res.status(404).json({ message: "Trip is not found" });
   }
