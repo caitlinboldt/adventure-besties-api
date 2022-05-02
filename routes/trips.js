@@ -108,7 +108,12 @@ router.patch("/new/addUser", async (req, res, next) => {
     { email: req.body.email },
     { $addToSet: { trips: req.body.tripId } }
   );
+
   if (!user) {
+    return res.status(404).json({ message: "User is not found" });
+  }
+
+  if (user.settings.allow_find_by_email === false) {
     return res.status(404).json({ message: "User is not found" });
   }
 

@@ -30,24 +30,22 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // Update settings for user.
-router.patch("/:id", (req, res, next) => {
-  User.findByIdAndUpdate(
-    { _id: req.params.id },
-    {
+router.patch("/:id", async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    user.set({
       settings: {
+        ...user.settings,
         [req.body.key]: req.body.value,
       },
-    },
-    { new: true },
-    (error, updatedUser) => {
-      if (error) {
-        return res.status(500).json({ error });
-      }
-      return res
-        .status(200)
-        .json({ message: "Successfully saved user update", updatedUser });
-    }
-  );
+    });
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "Successfully saved user update", user });
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
 });
 
 router.delete("/:id", (req, res, next) => {
