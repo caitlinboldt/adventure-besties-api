@@ -29,12 +29,16 @@ router.get("/:id", async (req, res, next) => {
   return res.status(200).json(user);
 });
 
+// Update settings for user.
 router.patch("/:id", (req, res, next) => {
-  // TO DO: Add functionality to be able to update more than one key at a time.
   User.findByIdAndUpdate(
     { _id: req.params.id },
-    { [req.body.key]: req.body.value },
-    {},
+    {
+      settings: {
+        [req.body.key]: req.body.value,
+      },
+    },
+    { new: true },
     (error, updatedUser) => {
       if (error) {
         return res.status(500).json({ error });
@@ -47,7 +51,6 @@ router.patch("/:id", (req, res, next) => {
 });
 
 router.delete("/:id", (req, res, next) => {
-  // TO DO: Add functionality to delete the user from all trips as well.
   User.findByIdAndDelete(req.params.id, (error, deletedUser) => {
     if (error) {
       return res.status(500).json({ error });
